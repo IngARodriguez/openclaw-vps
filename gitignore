@@ -1,0 +1,6 @@
+.env
+.env.*
+*.log
+.git-credentials
+node_modules/
+__pycache__/
