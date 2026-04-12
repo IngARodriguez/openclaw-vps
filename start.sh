@@ -3,8 +3,8 @@ set -e
 
 echo ""
 echo "╔══════════════════════════════════════════╗"
-echo "║     OpenClaw VPS  —  Alpine Linux        ║"
-echo "║     github-cli + vercel + claude-code    ║"
+echo "║     OpenClaw VPS  —  Ubuntu Linux        ║"
+echo "║     claude-code Installed                ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
@@ -151,7 +151,7 @@ cd ~/workspace 2>/dev/null || true
 clear
 echo ""
 echo "╔══════════════════════════════════════════╗"
-echo "║     OpenClaw VPS  —  Alpine Linux        ║"
+echo "║     OpenClaw VPS  —  Ubuntu Linux        ║"
 echo "║  save | sync | gs | claw | logs          ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
