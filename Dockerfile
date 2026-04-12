@@ -1,12 +1,9 @@
-FROM alpine:3.19
+FROM node:22-alpine
 
 RUN apk add --no-cache \
     bash curl wget git vim nano \
-    nodejs npm python3 \
-    openssh-client ca-certificates \
-    jq unzip htop ttyd
-
-RUN sed -i 's|/bin/ash|/bin/bash|' /etc/passwd 2>/dev/null || true
+    python3 openssh-client \
+    ca-certificates jq unzip htop ttyd
 
 RUN git config --global init.defaultBranch main && \
     git config --global pull.rebase false
