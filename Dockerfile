@@ -7,7 +7,9 @@ RUN apk add --no-cache \
     htop ttyd github-cli sudo
 
 RUN adduser -D -s /bin/bash -h /home/claw claw && \
-    echo "claw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+    echo "claw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    echo 'export PATH="/usr/local/bin:/usr/local/sbin:$PATH"' >> /home/claw/.profile && \
+    echo 'export PATH="/usr/local/bin:/usr/local/sbin:$PATH"' >> /home/claw/.bashrc
 
 RUN git config --global init.defaultBranch main && \
     git config --global pull.rebase false
