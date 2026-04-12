@@ -1,0 +1,8 @@
+.env
+.env.*
+*.log
+.git-credentials
+node_modules/
+__pycache__/
+auth.json
+auth-profiles.json
