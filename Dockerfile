@@ -19,6 +19,11 @@ RUN npm install -g \
     vercel \
     --force
 
+RUN ln -sf /usr/local/bin/openclaw /usr/bin/openclaw && \
+    ln -sf /usr/local/bin/claude /usr/bin/claude && \
+    ln -sf /usr/local/bin/vercel /usr/bin/vercel && \
+    ln -sf /usr/local/bin/gh /usr/bin/gh
+
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
