@@ -8,6 +8,9 @@ echo "║     github-cli + vercel + claude-code    ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
+# PATH global para que root y claw encuentren node/npm
+export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+
 if [ -n "$GIT_USER" ] && [ -n "$GIT_EMAIL" ]; then
     git config --global user.name  "$GIT_USER"
     git config --global user.email "$GIT_EMAIL"
@@ -120,8 +123,9 @@ EOF
 chown -R claw:claw /home/claw/.openclaw
 echo "▸ OpenClaw configurado"
 
-# ── Exportar variables de entorno al perfil de claw ───────────
+# ── Exportar variables de entorno al perfil de claw ──────────
 cat > /home/claw/.env << ENVEOF
+export PATH="/usr/local/bin:/usr/local/sbin:\$PATH"
 export OPENROUTER_API_KEY="${OPENROUTER_API_KEY:-}"
 export TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 export GITHUB_TOKEN="${GITHUB_TOKEN:-}"
@@ -136,13 +140,12 @@ chown claw:claw /home/claw/.env
 
 cat > /home/claw/.bashrc << 'BASH'
 source ~/.env 2>/dev/null || true
-export PATH="$PATH:/home/claw/.npm-global/bin"
 alias save='cd ~/workspace && git add -A && git commit -m "save: $(date +%F\ %T)" && git push && echo "✓ Guardado en GitHub"'
 alias sync='cd ~/workspace && git pull && echo "✓ Sincronizado"'
 alias gs='cd ~/workspace && git status'
 alias ll='ls -lah'
 alias workspace='cd ~/workspace'
-alias claw='OPENROUTER_API_KEY=$OPENROUTER_API_KEY openclaw gateway run'
+alias claw='openclaw gateway run'
 alias logs='tail -f /tmp/openclaw/openclaw-$(date +%Y-%m-%d).log'
 cd ~/workspace 2>/dev/null || true
 clear
@@ -156,8 +159,12 @@ BASH
 
 chown claw:claw /home/claw/.bashrc
 
+# ── Arrancar OpenClaw como claw con PATH correcto ────────────
 echo "▸ Arrancando OpenClaw gateway..."
-su - claw -c "OPENROUTER_API_KEY='${OPENROUTER_API_KEY:-}' ANTHROPIC_API_KEY='${ANTHROPIC_API_KEY:-}' openclaw gateway run" &
+su - claw -c "export PATH=/usr/local/bin:/usr/local/sbin:\$PATH && \
+    OPENROUTER_API_KEY='${OPENROUTER_API_KEY:-}' \
+    ANTHROPIC_API_KEY='${ANTHROPIC_API_KEY:-}' \
+    openclaw gateway run" &
 sleep 3
 
 echo "▸ Terminal web en :${PORT:-8080}"
