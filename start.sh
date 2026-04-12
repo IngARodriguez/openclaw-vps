@@ -120,7 +120,22 @@ EOF
 chown -R claw:claw /home/claw/.openclaw
 echo "▸ OpenClaw configurado"
 
-cat >> /home/claw/.bashrc << 'BASH'
+# ── Exportar variables de entorno al perfil de claw ───────────
+cat > /home/claw/.env << ENVEOF
+export OPENROUTER_API_KEY="${OPENROUTER_API_KEY:-}"
+export TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
+export GITHUB_TOKEN="${GITHUB_TOKEN:-}"
+export GITHUB_USER="${GITHUB_USER:-}"
+export GITHUB_REPO="${GITHUB_REPO:-}"
+export GIT_USER="${GIT_USER:-}"
+export GIT_EMAIL="${GIT_EMAIL:-}"
+export VERCEL_TOKEN="${VERCEL_TOKEN:-}"
+export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
+ENVEOF
+chown claw:claw /home/claw/.env
+
+cat > /home/claw/.bashrc << 'BASH'
+source ~/.env 2>/dev/null || true
 export PATH="$PATH:/home/claw/.npm-global/bin"
 alias save='cd ~/workspace && git add -A && git commit -m "save: $(date +%F\ %T)" && git push && echo "✓ Guardado en GitHub"'
 alias sync='cd ~/workspace && git pull && echo "✓ Sincronizado"'
