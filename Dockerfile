@@ -1,15 +1,19 @@
-FROM node:22-alpine
+FROM node:22-slim
 
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     bash curl wget git vim nano \
     python3 openssh-client \
     ca-certificates jq unzip \
-    htop ttyd github-cli sudo
+    htop ttyd \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN adduser -D -s /bin/bash -h /home/claw claw && \
-    echo "claw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-    echo 'export PATH="/usr/local/bin:/usr/local/sbin:$PATH"' >> /home/claw/.profile && \
-    echo 'export PATH="/usr/local/bin:/usr/local/sbin:$PATH"' >> /home/claw/.bashrc
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list && \
+    apt-get update && apt-get install -y gh && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN adduser --disabled-password --gecos "" --shell /bin/bash claw && \
+    echo "claw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 RUN git config --global init.defaultBranch main && \
     git config --global pull.rebase false
