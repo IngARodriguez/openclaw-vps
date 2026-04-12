@@ -73,7 +73,7 @@ cat > /home/claw/.openclaw/openclaw.json << EOF
 {
   "agents": {
     "defaults": {
-      "workspace": "/home/claw/.openclaw/workspace",
+      "workspace": "/home/claw/workspace",
       "models": {
         "openrouter/google/gemini-2.0-flash-001": {}
       },
@@ -138,6 +138,18 @@ export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-}"
 ENVEOF
 chown claw:claw /home/claw/.env
 
+# ── tmux config para sesión persistente en móvil ─────────────
+cat > /home/claw/.tmux.conf << 'TMUX'
+set -g mouse on
+set -g history-limit 10000
+set -g status-bg black
+set -g status-fg green
+set -g status-left '[OpenClaw VPS] '
+set -g status-right '%H:%M'
+set -g default-terminal "xterm-256color"
+TMUX
+chown claw:claw /home/claw/.tmux.conf
+
 cat > /home/claw/.bashrc << 'BASH'
 source ~/.env 2>/dev/null || true
 alias save='cd ~/workspace && git add -A && git commit -m "save: $(date +%F\ %T)" && git push && echo "✓ Guardado en GitHub"'
@@ -168,9 +180,10 @@ su - claw -c "export PATH=/usr/local/bin:/usr/local/sbin:\$PATH && \
 sleep 3
 
 echo "▸ Terminal web en :${PORT:-8080}"
-TTYD_ARGS="--port ${PORT:-8080} --writable"
+TTYD_ARGS="--port ${PORT:-8080} --writable --ping-interval 30"
 if [ -n "$TTYD_USER" ] && [ -n "$TTYD_PASS" ]; then
     TTYD_ARGS="$TTYD_ARGS --credential $TTYD_USER:$TTYD_PASS"
 fi
 
-exec ttyd $TTYD_ARGS su - claw
+# tmux: sesión persistente — reconecta automáticamente en móvil
+exec ttyd $TTYD_ARGS su - claw -c "tmux new-session -A -s main"

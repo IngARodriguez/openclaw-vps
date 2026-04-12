@@ -4,7 +4,7 @@ FROM node:22-slim
 RUN apt-get update && apt-get install -y \
     bash curl wget git vim nano \
     python3 openssh-client sudo \
-    ca-certificates jq unzip htop \
+    ca-certificates jq unzip htop tmux \
     && rm -rf /var/lib/apt/lists/*
 
 # ── GitHub CLI ────────────────────────────────────────────────
