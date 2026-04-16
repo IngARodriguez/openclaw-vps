@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     bash curl wget git vim nano \
     python3 openssh-client sudo \
     ca-certificates jq unzip htop tmux \
+    ripgrep fd-find lsd bat \
     && rm -rf /var/lib/apt/lists/*
 
 # ── GitHub CLI ────────────────────────────────────────────────
@@ -19,6 +20,22 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 RUN curl -fsSL https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64 \
     -o /usr/local/bin/ttyd && \
     chmod +x /usr/local/bin/ttyd
+
+# ── Starship prompt ───────────────────────────────────────────
+RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes
+
+# ── Delta (git diff mejorado) ─────────────────────────────────
+RUN ARCH=$(dpkg --print-architecture) && \
+    case "$ARCH" in \
+      amd64) DELTA_ARCH="x86_64-unknown-linux-gnu" ;; \
+      arm64) DELTA_ARCH="aarch64-unknown-linux-gnu" ;; \
+      *) DELTA_ARCH="x86_64-unknown-linux-gnu" ;; \
+    esac && \
+    DELTA_VER=$(curl -s https://api.github.com/repos/dandavison/delta/releases/latest \
+        | grep '"tag_name"' | cut -d'"' -f4) && \
+    curl -fsSL "https://github.com/dandavison/delta/releases/download/${DELTA_VER}/delta-${DELTA_VER}-${DELTA_ARCH}.tar.gz" \
+    | tar -xz --wildcards "*/delta" --strip-components=1 -C /usr/local/bin/ && \
+    chmod +x /usr/local/bin/delta
 
 # ── Usuario no-root claw ──────────────────────────────────────
 RUN adduser --disabled-password --gecos "" --shell /bin/bash claw && \
