@@ -31,11 +31,12 @@ RUN ARCH=$(dpkg --print-architecture) && \
       arm64) DELTA_ARCH="aarch64-unknown-linux-gnu" ;; \
       *) DELTA_ARCH="x86_64-unknown-linux-gnu" ;; \
     esac && \
-    DELTA_VER=$(curl -s https://api.github.com/repos/dandavison/delta/releases/latest \
-        | grep '"tag_name"' | cut -d'"' -f4) && \
-    curl -fsSL "https://github.com/dandavison/delta/releases/download/${DELTA_VER}/delta-${DELTA_VER}-${DELTA_ARCH}.tar.gz" \
-    | tar -xz --wildcards "*/delta" --strip-components=1 -C /usr/local/bin/ && \
-    chmod +x /usr/local/bin/delta
+    curl -fsSL "https://github.com/dandavison/delta/releases/download/0.19.2/delta-0.19.2-${DELTA_ARCH}.tar.gz" \
+    -o /tmp/delta.tar.gz && \
+    tar -xz -f /tmp/delta.tar.gz -C /tmp/ && \
+    mv /tmp/delta-0.19.2-${DELTA_ARCH}/delta /usr/local/bin/delta && \
+    chmod +x /usr/local/bin/delta && \
+    rm -rf /tmp/delta.tar.gz /tmp/delta-0.19.2-*
 
 # ── Usuario no-root claw ──────────────────────────────────────
 RUN adduser --disabled-password --gecos "" --shell /bin/bash claw && \
